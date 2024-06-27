@@ -50,7 +50,7 @@ const SkinsModal = ({ open, handleClose, userData, userSkins, userCurrentSkin })
     // get skin id 
     const skinID = event.target.id;
     setIsLoading(true);
-    axios.post(`https://app.sendchain.io/api/buy-skin`, {
+    axios.post(`https://app.youplex.site/api/buy-skin`, {
       userId: userData.id,
       skinID: Number(skinID)
     })
@@ -61,7 +61,7 @@ const SkinsModal = ({ open, handleClose, userData, userSkins, userCurrentSkin })
     
     .catch(error => {
       if  (error.response.data.error === "SkinID already exists") {
-        axios.post(`https://app.sendchain.io/api/change-skin`, {
+        axios.post(`https://app.youplex.site/api/change-skin`, {
           userId: userData.id,
           skinID: Number(skinID)
         }).then(response => {

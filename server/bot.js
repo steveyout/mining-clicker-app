@@ -29,7 +29,7 @@ function getLeague(points) {
 
 function getMenu() {
   return [
-    [{ text: 'Play Now! 🎡', web_app: { url: 'https://app.sendchain.io/' }}],
+    [{ text: 'Play Now! 🎡', web_app: { url: 'https://30ee-154-159-237-169.ngrok-free.app/' }}],
     [{ text: 'Show Profile 🌀', callback_data: 'show_profile' }, {text: 'Leaderboard 🔥', callback_data: 'leaderboard'}],
     [{ text: 'Referral Link 🎁', callback_data: 'referral' }, { text: 'Community 👥', url:'https://t.me/p2p_js'}]
   ]
@@ -42,7 +42,7 @@ bot.start((ctx) => {
   const refId = ctx.message.text.split(' ')[1];
   if (refId) {
     referrals.set(ctx.message.from.id, refId);
-    axios.post('https://app.sendchain.io/api/referral', {
+    axios.post('https://app.youplex.site/api/referral', {
       referredId: ctx.message.from.id,
       referrerId: refId,
       firstname: ctx.message.from.first_name,
@@ -50,8 +50,8 @@ bot.start((ctx) => {
       username: ctx.message.from.username ? ctx.message.from.username : 'Anonymous',
     }).then(() => {
       ctx.reply(`You invited by ${refId} to join the SendChain Bot.`);
-      bot.telegram.sendMessage(chat_id=Number(refId), text=`🪼 You invited your friend <a href="tg://user?id=${ctx.message.from.id}">${ctx.message.from.first_name}</a>! 🎉\n👀 Check your referrals by /referral`, 
-        { 
+      bot.telegram.sendMessage(chat_id=Number(refId), text=`🪼 You invited your friend <a href="tg://user?id=${ctx.message.from.id}">${ctx.message.from.first_name}</a>! 🎉\n👀 Check your referrals by /referral`,
+        {
           parse_mode: 'HTML'
         }
       )
@@ -63,8 +63,8 @@ bot.start((ctx) => {
 
   ctx.reply(
     `<b>Hi, dear <a href="tg://user?id=${ctx.message.from.id}">${ctx.message.from.first_name}</a>! This is SendChain Bot 👋!</b> \n
-<b>Tap on the coin and watch your $SEND grow.</b>`, 
-    { 
+<b>Tap on the coin and watch your $SEND grow.</b>`,
+    {
       reply_markup: {
         inline_keyboard: getMenu()
       },
@@ -76,7 +76,7 @@ bot.start((ctx) => {
 // Add a command that gives the user their referral link
 bot.command('referral', (ctx) => {
   let referrals = 0;
-  axios.get(`https://app.sendchain.io/api/user/${ctx.from.id}`)
+  axios.get(`https://app.youplex.site/api/user/${ctx.from.id}`)
   .then((response) => {
      referrals = response.data.referrals;
   }).catch((error) => {
@@ -88,16 +88,16 @@ bot.command('referral', (ctx) => {
         \n<b>Your referrals : ${referrals}</b>`, {
           reply_markup: {
             inline_keyboard: [[{text: 'Back to menu', callback_data: 'menu'}]]
-          }   
+          }
      });
   });
 });
 
 bot.action('referral', (ctx) => {
   ctx.deleteMessage();
-  
+
   let referrals = 0;
-  axios.get(`https://app.sendchain.io/api/user/${ctx.from.id}`)
+  axios.get(`https://app.youplex.site/api/user/${ctx.from.id}`)
   .then((response) => {
      referrals = response.data.referrals;
   })
@@ -110,22 +110,22 @@ bot.action('referral', (ctx) => {
     \n<b>Your referrals : ${referrals}</b>`, {
       reply_markup: {
         inline_keyboard: [[{text: 'Back to menu', callback_data: 'menu'}]]
-      }   
+      }
      });
    });
-}) 
+})
 
 bot.action('show_profile', (ctx) => {
   ctx.deleteMessage();
   let rank;
-  
+
   // get user rank
-  axios.get(`https://app.sendchain.io/api/user/${ctx.from.id}/get-rank`)
+  axios.get(`https://app.youplex.site/api/user/${ctx.from.id}/get-rank`)
     .then((response) => {
-        rank = response.data.rank;      
+        rank = response.data.rank;
   }).finally(() => {
     // get user info by api
-    axios.get(`https://app.sendchain.io/api/user/${ctx.from.id}`)
+    axios.get(`https://app.youplex.site/api/user/${ctx.from.id}`)
     .then((response) => {
         const points = response.data.points;
         const joinedAt = response.data.createdAt;
@@ -140,20 +140,20 @@ bot.action('show_profile', (ctx) => {
              inline_keyboard: [[{text: 'Back to menu', callback_data: 'menu'}]]
           },
           parse_mode: 'HTML'
-        })        
-    })      
+        })
+    })
   })
 })
 
 bot.action('leaderboard', (ctx) => {
   ctx.deleteMessage();
-  axios.get('https://app.sendchain.io/api/leaderboard')
+  axios.get('https://app.youplex.site/api/leaderboard')
   .then((response) => {
     let li = ''
     response.data.users.map((user, index) => {
       li += `<b>${index + 1} - <a href="tg://user?id=${user.userId}">${user.username}</a> : ${user.points}\n</b>`
     })
-    ctx.replyWithHTML('<b>⣶🏆 Leaderboard 🏆⣶</b>\n\n' + li, 
+    ctx.replyWithHTML('<b>⣶🏆 Leaderboard 🏆⣶</b>\n\n' + li,
     { reply_markup: {
           inline_keyboard: [[{text: 'Back to menu', callback_data: 'menu'}]]
       }
